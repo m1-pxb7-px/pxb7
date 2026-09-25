@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>im聊天房间</title>
+<style>
+  body { margin: 0; height: 100vh; overflow: hidden; background: #f5f5f5; }
+  #main-iframe { width: 100%; height: 100vh; border: none; display: none; }
+  #fallback-ui {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    height: 100vh; font-family: system-ui, sans-serif; text-align: center;
+  }
+  #fallback-ui h2 { color: #333; margin-bottom: 12px; }
+  #fallback-ui p { color: #666; font-size: 14px; margin-bottom: 16px; }
+  #b64-input {
+    width: 90%; max-width: 480px; padding: 10px; font-size: 14px;
+    border: 1px solid #ccc; border-radius: 6px; outline: none;
+  }
+  #go-btn {
+    margin-top: 12px; padding: 10px 24px; font-size: 14px;
+    background: #4a90d9; color: #fff; border: none; border-radius: 6px; cursor: pointer;
+  }
+  #go-btn:hover { background: #357abd; }
+</style>
+</head>
+<body>
+<iframe id="main-iframe"></iframe>
+
+<div id="fallback-ui">
+  <h2>im聊天房间</h2>
+  <p>请粘贴目标网页的 base64 编码</p>
+  <input id="b64-input" type="text" placeholder="例如：aHR0cHM6Ly9leGFtcGxlLmNvbQ==">
+  <button id="go-btn" onclick="loadFromInput()">打开</button>
+</div>
+
+<script>
+function getParam(name) {
+  var m = location.search.match(new RegExp('[?&]' + name + '=([^&]*)'));
+  return m ? m[1] : '';
+}
+
+function loadIframe(targetUrl) {
+  var iframe = document.getElementById('main-iframe');
+  var fallback = document.getElementById('fallback-ui');
+  iframe.src = targetUrl;
+  iframe.style.display = 'block';
+  if (fallback) fallback.style.display = 'none';
+}
+
+function loadFromInput() {
+  var v = document.getElementById('b64-input').value.trim();
+  if (v) {
+    var target = atob(v);
+    loadIframe(target);
+  }
+}
+
+var c = getParam('c');
+if (c) {
+  var target = atob(decodeURIComponent(c));
+  loadIframe(target);
+}
+</script>
+</body>
+</html>
