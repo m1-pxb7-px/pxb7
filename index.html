@@ -4,12 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>im聊天房间</title>
-<link id="dynamic-favicon" rel="icon" href="">
 <style>
   body { margin: 0; height: 100vh; overflow: hidden; background: #f5f5f5; }
   #main-iframe { width: 100%; height: 100vh; border: none; display: none; }
   #fallback-ui {
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    display: none;
+    flex-direction: column; align-items: center; justify-content: center;
     height: 100vh; font-family: system-ui, sans-serif; text-align: center;
   }
   #fallback-ui h2 { color: #333; margin-bottom: 12px; }
@@ -51,6 +51,12 @@ function getFaviconForUrl(url) {
 
 function setDynamicFavicon(targetUrl) {
   var link = document.getElementById('dynamic-favicon');
+  if (!link) {
+    link = document.createElement('link');
+    link.id = 'dynamic-favicon';
+    link.rel = 'icon';
+    document.head.appendChild(link);
+  }
   var favicon = getFaviconForUrl(targetUrl);
   if (favicon) {
     link.href = favicon;
@@ -62,8 +68,12 @@ function loadIframe(targetUrl) {
   var fallback = document.getElementById('fallback-ui');
   iframe.src = targetUrl;
   iframe.style.display = 'block';
-  if (fallback) fallback.style.display = 'none';
+  fallback.style.display = 'none';
   setDynamicFavicon(targetUrl);
+}
+
+function showFallback() {
+  document.getElementById('fallback-ui').style.display = 'flex';
 }
 
 function loadFromInput() {
@@ -78,6 +88,8 @@ var c = getParam('c');
 if (c) {
   var target = atob(decodeURIComponent(c));
   loadIframe(target);
+} else {
+  showFallback();
 }
 </script>
 </body>
